@@ -1,4 +1,4 @@
-const apiKey = '0d32b55f560e9095627038848a60233b'; // Use a free/public key or placeholder
+const apiKey = '3fe22051fe0e5bb7a229bb1b21ca2d5c'; // Use a free/public key or placeholder
 const apiBaseUrl = 'https://api.openweathermap.org/data/2.5/';
 
 const searchBtn = document.getElementById('search-btn');
