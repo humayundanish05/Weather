@@ -227,6 +227,9 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    opacity: 0;
+    /* Star hidden */
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
 #city-name {
@@ -248,6 +251,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    animation: pulse 5s ease-in-out infinite;
 }
 
 .temp-unit {
@@ -268,6 +272,7 @@ main {
     width: 64px;
     height: 64px;
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
+    animation: float 3s ease-in-out infinite;
 }
 
 .hidden {
@@ -279,6 +284,9 @@ main {
     grid-template-columns: 1fr 1fr;
     /* 2 columns on mobile */
     gap: 10px;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out 0.2s forwards;
+    /* Delay 0.2s */
 }
 
 .detail-card {
@@ -290,6 +298,12 @@ main {
     align-items: center;
     gap: 10px;
     text-align: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .detail-card i {
@@ -312,6 +326,9 @@ main {
     width: 100%;
     overflow: hidden;
     /* Contain scroll */
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out 0.4s forwards;
+    /* Delay 0.4s */
 }
 
 .forecast-section h2 {
@@ -346,6 +363,12 @@ main {
     background: rgba(255, 255, 255, 0.12);
     border-radius: 12px;
     backdrop-filter: blur(5px);
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.forecast-card:hover {
+    transform: translateY(-5px) scale(1.05);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .forecast-day {
@@ -385,4 +408,45 @@ main {
     text-align: center;
     width: 100%;
     color: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
