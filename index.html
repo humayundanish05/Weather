@@ -1,0 +1,132 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simple Weather — Demo</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#60a5fa;--muted:#9aa7be}
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Arial}
+    body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background:linear-gradient(black);
+  color: #e6eef8;
+  padding: 12px;
+}
+    .wrap{width:100%;max-width:720px;padding:20px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.02));box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+    header{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+    h1{font-size:1.2rem;margin:0;text-align:center}
+    .controls{display:flex;flex-direction:column;gap:8px}
+    input[type=text]{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;outline:none;width:100%}
+    button{padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#07203a;font-weight:600;cursor:pointer;width:100%}
+    button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    main{display:flex;flex-direction:column;gap:18px;margin-top:18px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:18px;border-radius:12px}
+    .big{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+    .temp{font-size:2.4rem;font-weight:700}
+    .desc{font-size:0.95rem;color:var(--muted)}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .stat{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))}
+    .s-icon{font-size:1.4rem}
+    .s-value{font-weight:700}
+    .s-label{font-size:0.8rem;color:var(--muted)}
+    .right .icon{width:100%;display:flex;align-items:center;justify-content:center}
+    .icon img{width:80px;height:80px}
+    footer{margin-top:14px;color:var(--muted);font-size:0.85rem;text-align:center}
+    @media (max-width:640px){
+      .stats{grid-template-columns:1fr}
+      .temp{font-size:2rem}
+      .s-icon{font-size:1.2rem}
+      main{gap:12px}
+      h1{font-size:1rem}
+    }
+    @media (max-width:420px){
+      .wrap{padding:16px}
+      .temp{font-size:1.8rem}
+      .s-icon{font-size:1.1rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Simple Weather</h1>
+      <div class="controls">
+        <button id="unitBtn" class="secondary">°C / °F</button>
+        <input id="cityInput" type="text" placeholder="City, e.g. Karachi" />
+        <button id="searchBtn">Search</button>
+        <button id="geoBtn" class="secondary">Use my location</button>
+      </div>
+    </header><main>
+  <section class="card left">
+    <div id="result" aria-live="polite">
+      <div class="big">
+        <div>
+          <div id="location" style="font-weight:700">—</div>
+          <div class="desc" id="weatherDesc">Search a city or use your location</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div class="temp" id="temp">—°C</div>
+          <div class="desc" id="feelsLike"></div>
+        </div>
+      </div>
+
+      <div class="stats" style="margin-top:12px">
+        <div class="stat"><span class="s-icon">💨</span><div><div class="s-value" id="wind">—</div><div class="s-label">Wind</div></div></div>
+        <div class="stat"><span class="s-icon">💧</span><div><div class="s-value" id="humidity">—</div><div class="s-label">Humidity</div></div></div>
+        <div class="stat"><span class="s-icon">🌡️</span><div><div class="s-value" id="pressure">—</div><div class="s-label">Pressure</div></div></div>
+      </div>
+      <div id="coords" style="font-size:0.85rem;color:var(--muted);margin-top:8px"></div>
+    </div>
+  </section>
+
+  <aside class="card right">
+    <div class="icon"><img id="icon" alt="weather icon" src=""/></div>
+    <div style="margin-top:8px">
+      <div style="font-weight:700">More</div>
+      <div class="row" style="margin-top:8px"><div id="sunrise">Sunrise: —</div><div id="sunset">Sunset: —</div></div>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  danishoo.weather
+</footer>
+
+  </div>  <script>
+    const API_KEY = '3fe22051fe0e5bb7a229bb1b21ca2d5c';
+    let useCelsius = true;
+    const searchBtn = document.getElementById('searchBtn');
+    const geoBtn = document.getElementById('geoBtn');
+    const unitBtn = document.getElementById('unitBtn');
+    const cityInput = document.getElementById('cityInput');
+    const locationEl = document.getElementById('location');
+    const weatherDescEl = document.getElementById('weatherDesc');
+    const tempEl = document.getElementById('temp');
+    const feelsLikeEl = document.getElementById('feelsLike');
+    const coordsEl = document.getElementById('coords');
+    const iconEl = document.getElementById('icon');
+    const sunriseEl = document.getElementById('sunrise');
+    const sunsetEl = document.getElementById('sunset');
+    const windEl = document.getElementById('wind');
+    const humidityEl = document.getElementById('humidity');
+    const pressureEl = document.getElementById('pressure');
+
+    function showLoading(){ locationEl.textContent='Loading…'; weatherDescEl.textContent=''; tempEl.textContent='—°C'; windEl.textContent='—'; humidityEl.textContent='—'; pressureEl.textContent='—'; coordsEl.textContent=''; iconEl.src=''; }
+    async function fetchByCity(city){ if(!city) return; showLoading(); try{ const res=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${API_KEY}`); if(!res.ok) throw new Error('City not found or API error'); const data=await res.json(); render(data);}catch(err){locationEl.textContent='Error'; weatherDescEl.textContent=err.message;}}
+    async function fetchByCoords(lat,lon){showLoading(); try{const res=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);if(!res.ok)throw new Error('Location not found or API error');const data=await res.json();render(data);}catch(err){locationEl.textContent='Error'; weatherDescEl.textContent=err.message;}}
+    function render(data){window.__lastData=data; const name=data.name + (data.sys && data.sys.country ? (', '+data.sys.country):''); locationEl.textContent=name||'Unknown location'; const w=data.weather&&data.weather[0]?data.weather[0]:null; weatherDescEl.textContent=w?`${w.main} — ${w.description}`:''; const temp=data.main?data.main.temp:null; tempEl.textContent=temp!==null?`${Math.round(useCelsius?temp:(temp*9/5+32))}°${useCelsius?'C':'F'}`:'—'; feelsLikeEl.textContent=data.main?`Feels like ${Math.round(useCelsius?data.main.feels_like:(data.main.feels_like*9/5+32))}°${useCelsius?'C':'F'}`:''; windEl.textContent=data.wind?data.wind.speed+' m/s':'—'; humidityEl.textContent=data.main?data.main.humidity+'%':'—'; pressureEl.textContent=data.main?data.main.pressure+' hPa':'—'; coordsEl.textContent=`Lat: ${data.coord?data.coord.lat.toFixed(3):'—'} Lon: ${data.coord?data.coord.lon.toFixed(3):'—'}`; if(w && w.icon){iconEl.src=`https://openweathermap.org/img/wn/${w.icon}@2x.png`; iconEl.alt=w.description||'weather';} else iconEl.src=''; if(data.sys){ const sr=new Date((data.sys.sunrise||0)*1000); const ss=new Date((data.sys.sunset||0)*1000); sunriseEl.textContent='Sunrise: '+sr.toLocaleTimeString(); sunsetEl.textContent='Sunset: '+ss.toLocaleTimeString();}}
+
+    searchBtn.addEventListener('click',()=>fetchByCity(cityInput.value.trim()));
+    cityInput.addEventListener('keyup',(e)=>{if(e.key==='Enter')fetchByCity(cityInput.value.trim());});
+    geoBtn.addEventListener('click',()=>{if(!navigator.geolocation){alert('Geolocation is not supported by your browser'); return;} navigator.geolocation.getCurrentPosition(pos=>{fetchByCoords(pos.coords.latitude,pos.coords.longitude);},err=>{alert('Unable to get your location: '+err.message);});});
+    unitBtn.addEventListener('click',()=>{useCelsius=!useCelsius; if(window.__lastData) render(window.__lastData);});
+
+    fetchByCity('Karachi');
+  </script></body>
+</html>
