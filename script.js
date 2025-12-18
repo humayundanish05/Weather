@@ -14,6 +14,7 @@ let currentUnit = 'metric'; // 'metric' for Celsius, 'imperial' for Fahrenheit
 const cityNameEl = document.getElementById('city-name');
 const currentDateEl = document.getElementById('current-date');
 const currentTempEl = document.getElementById('current-temp');
+const feelsLikeEl = document.getElementById('feels-like'); // New
 const weatherIconEl = document.getElementById('weather-icon');
 const weatherDescEl = document.getElementById('weather-description');
 const humidityEl = document.getElementById('humidity');
@@ -141,6 +142,7 @@ function updateCurrentWeather(data) {
     cityNameEl.innerText = `${data.name}, ${data.sys.country}`;
     currentDateEl.innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     currentTempEl.innerText = Math.round(data.main.temp);
+    feelsLikeEl.innerText = `${Math.round(data.main.feels_like)}°`; // New feature
 
     // Description & Icon
     const weather = data.weather[0];
