@@ -284,3 +284,15 @@ function showError(msg) {
         hideError();
     }, 3000);
 }
+
+function hideError() {
+    errorMessage.classList.add('hidden');
+}
+
+window.addEventListener('appinstalled', () => {
+    showError('App installed successfully!');
+    errorMessage.style.background = 'rgba(75, 181, 67, 0.9)'; // Green for success
+    setTimeout(() => {
+        errorMessage.style.background = ''; // Reset
+    }, 3000);
+});
